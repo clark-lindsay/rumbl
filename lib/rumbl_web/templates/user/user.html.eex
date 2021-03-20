@@ -1,0 +1,4 @@
+<table>
+<tr><td>username: <b><%= @user.username %></b></td></tr>
+<tr><td>name: <b><%= @user.name %></b></td><td>user id: <b><%= @user.id %></b></td></tr>
+</table>
