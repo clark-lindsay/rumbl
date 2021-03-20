@@ -8,7 +8,7 @@ defmodule RumblWeb.UserController do
     render(conn, "index.html", users: users)
   end
 
-  def show(conn, %{ "id" => id }) do
+  def show(conn, %{"id" => id}) do
     render(conn, "show.html", user: Accounts.get_user(id))
   end
 end
