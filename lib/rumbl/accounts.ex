@@ -1,6 +1,6 @@
 defmodule Rumbl.Accounts do
   @moduledoc """
-  The Accounts module
+  The Accounts context
   """
 
   alias Rumbl.Repo
