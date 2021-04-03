@@ -1,0 +1,12 @@
+<h1> New User </h1>
+
+<%= form_for @changeset, Routes.user_path(@conn, :create), fn
+form_input -> %>
+  <div>
+    <%= text_input form_input, :name, placeholder: "Name" %>
+  </div>
+  <div>
+    <%= text_input form_input, :username, placeholder: "Username" %>
+  </div>
+  <%= submit "Create User" %>
+<%= end %>
