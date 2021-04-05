@@ -5,6 +5,7 @@
     <p>Oops! Something went wrong. Please check the errors below.</p>
   </div>
 <%= end %>
+
 <%= form_for @changeset, Routes.user_path(@conn, :create), fn
 form -> %>
   <div>
