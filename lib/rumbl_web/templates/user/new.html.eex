@@ -4,7 +4,7 @@
   <div class="alert alert-danger">
     <p>Oops! Something went wrong. Please check the errors below.</p>
   </div>
-<%= end %>
+<% end %>
 
 <%= form_for @changeset, Routes.user_path(@conn, :create), fn
 form -> %>
@@ -17,4 +17,4 @@ form -> %>
     <%= error_tag form, :username %>
   </div>
   <%= submit "Create User" %>
-<%= end %>
+<% end %>
