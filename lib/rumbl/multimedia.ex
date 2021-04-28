@@ -38,18 +38,6 @@ defmodule Rumbl.Multimedia do
   """
   def get_video!(id), do: Repo.get!(Video, id)
 
-  @doc """
-  Creates a video.
-
-  ## Examples
-
-      iex> create_video(%{field: value})
-      {:ok, %Video{}}
-
-      iex> create_video(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def create_video(%Accounts.User{} = user, attrs \\ %{}) do
     %Video{}
     |> Video.changeset(attrs)
