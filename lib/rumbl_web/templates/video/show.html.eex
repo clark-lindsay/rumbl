@@ -4,7 +4,7 @@
 
   <li>
     <strong>Url:</strong>
-    <%= @video.url %>
+    <%= link @video.url, to: @video.url %>
   </li>
 
   <li>

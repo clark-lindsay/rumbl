@@ -13,7 +13,7 @@
   <tbody>
 <%= for video <- @videos do %>
     <tr>
-      <td><%= video.url %></td>
+      <td><%= link video.url, to: video.url %></td>
       <td><%= video.title %></td>
       <td><%= video.description %></td>
 
