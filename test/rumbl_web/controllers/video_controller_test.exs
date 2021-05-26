@@ -15,4 +15,26 @@ defmodule RumblWeb.VideoControllerTest do
       assert conn.halted
     end)
   end
+
+  describe "with a logged in user" do
+    setup %{ conn: conn, login_as: username } do
+      user = user_fixture(username: username)
+      conn = assign(conn, :current_user, user)
+
+      { :ok, user: user, conn: conn }
+    end
+
+    @tag login_as: "max"
+
+    test "lists all of a users videos on index", %{ conn: conn, user: user } do
+      user_video = video_fixture(user, title: "funny cats")
+      other_video = video_fixture(user_fixture(username: "other"), title: "another video")
+
+      response = get(conn, Routes.video_path(conn, :index)) |> html_response(200)
+
+      assert response =~ ~r/Listing Videos/
+      assert response =~ user_video.title
+      refute response =~ other_video.title
+    end
+  end
 end
