@@ -3,6 +3,9 @@ defmodule RumblWeb.VideoControllerTest do
 
   alias Rumbl.Multimedia
 
+  @valid_attrs %{ title: "Title", url: "example.com", description: "testing..." }
+  @invalid_attrs %{}
+
   test "requires authentication for all actions", %{ conn: conn } do
     Enum.each([
       get(conn, Routes.video_path(conn, :new)),
@@ -19,9 +22,6 @@ defmodule RumblWeb.VideoControllerTest do
   end
 
   describe "with a logged in user" do
-    @valid_attrs %{ title: "Title", url: "example.com", description: "testing..." }
-    @invalid_attrs %{}
-
     setup %{ conn: conn, login_as: username } do
       user = user_fixture(username: username)
       conn = assign(conn, :current_user, user)
@@ -62,6 +62,27 @@ defmodule RumblWeb.VideoControllerTest do
 
       assert html_response(create_conn, 200) =~ "check the errors"
       assert Enum.count(Multimedia.list_videos()) == count_before
+    end
+  end
+
+  test "authorizes actions against access by other users", %{ conn: conn } do 
+   owner = user_fixture(username: "owner") 
+    video = video_fixture(owner, @valid_attrs)
+
+    non_owner = user_fixture(username: "sneaky")
+    conn = assign(conn, :current_user, non_owner)
+
+    assert_error_sent :not_found, fn ->
+      get conn, Routes.video_path(conn, :show, video)
+    end
+    assert_error_sent :not_found, fn ->
+      get conn, Routes.video_path(conn, :edit, video)
+    end
+    assert_error_sent :not_found, fn ->
+      put conn, Routes.video_path(conn, :update, video, video: @valid_attrs)
+    end
+    assert_error_sent :not_found, fn ->
+      delete conn, Routes.video_path(conn, :delete, video)
     end
   end
 end
