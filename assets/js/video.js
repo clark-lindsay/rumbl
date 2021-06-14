@@ -24,12 +24,13 @@ const Video = {
     const videoChannel = socket.channel(`videos:${videoId}`);
 
     postButton.addEventListener("click", (_event) => {
-      const payload = { body: msgInput.value, at: Player.getCurrentTime() };
-      videoChannel
-        .push("new_annotation", payload)
-        .receive("error", (error) => console.log(error));
-
-      msgInput.value = "";
+      this.pushMessage(msgInput, videoChannel);
+    });
+    msgInput.addEventListener("keydown", (event) => {
+      if (event.code === "Enter") {
+        event.preventDefault();
+        this.pushMessage(msgInput, videoChannel);
+      }
     });
 
     videoChannel.on("new_annotation", (resp) => {
@@ -46,12 +47,6 @@ const Video = {
       });
   },
 
-  escapeUserInput(str) {
-    const div = document.createElement("div");
-    div.appendChild(document.createTextNode(str));
-    return div.innerHTML;
-  },
-
   renderAnnotation(messageContainer, { user, body, at }) {
     const template = document.createElement("div");
     template.innerHTML = `
@@ -64,6 +59,24 @@ const Video = {
 
     messageContainer.appendChild(template);
     messageContainer.scrollTop = messageContainer.scrollHeight;
+  },
+
+  escapeUserInput(str) {
+    const div = document.createElement("div");
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  },
+
+  pushMessage(msgInputElement, channel) {
+    const payload = {
+      body: msgInputElement.value,
+      at: Player.getCurrentTime(),
+    };
+    channel
+      .push("new_annotation", payload)
+      .receive("error", (error) => console.log(error));
+
+    msgInputElement.value = "";
   },
 };
 
