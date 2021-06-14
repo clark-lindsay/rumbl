@@ -2,7 +2,6 @@ defmodule RumblWeb.VideoChannel do
   use RumblWeb, :channel
 
   def join("videos:" <> video_id, _params, socket) do
-    :timer.send_interval(5000, :ping)
     { :ok, assign(socket, :video_id, String.to_integer(video_id)) }
   end
 
