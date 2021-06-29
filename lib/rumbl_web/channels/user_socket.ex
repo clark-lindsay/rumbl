@@ -25,7 +25,6 @@ defmodule RumblWeb.UserSocket do
       { :error, _reason } -> 
         :error
     end
-    {:ok, socket}
   end
   def connect(_params, _socket, _connect_info), do: :error
 
