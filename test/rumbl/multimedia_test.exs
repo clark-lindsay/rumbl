@@ -7,7 +7,8 @@ defmodule Rumbl.MultimediaTest do
   
   describe "categories" do
     test "lists categories in alphabetical order" do
-      for name <- ~w(Drama Comedy Action) do
+      categories = ~w(Drama Comedy Action)
+      for name <- categories do
         Multimedia.create_category!(name)
       end
 
@@ -16,7 +17,9 @@ defmodule Rumbl.MultimediaTest do
         name
       end
 
-      assert alpha_names == ~w(Action Comedy Drama)
+      test_only_alpha_names = alpha_names
+        |> Enum.filter(&(Enum.member?(categories, &1)))
+      assert test_only_alpha_names == ~w(Action Comedy Drama)
     end
   end
 
