@@ -39,20 +39,42 @@ const Video = {
 
     videoChannel
       .join()
-      .receive("ok", ({ annotations }) => {
-        annotations.forEach((ann) => {
-          this.renderAnnotation(msgContainer, ann);
-        });
+      .receive("ok", (resp) => {
+        this.scheduleMessages(msgContainer, resp.annotations);
       })
       .receive("error", (reason) => {
         console.log("join failed", reason);
       });
   },
 
+  scheduleMessages(msgContainer, annotations) {
+    clearTimeout(this.scheduleTimer);
+    this.scheduleTimer = setTimeout(() => {
+      let currentTime = Math.floor(Player.getCurrentTime() / 1000);
+      let remainingMessages = this.renderAtTime(
+        msgContainer,
+        currentTime,
+        annotations
+      );
+      this.scheduleMessages(msgContainer, remainingMessages);
+    }, 1000);
+  },
+
+  renderAtTime(msgContainer, timeInSeconds, annotations) {
+    annotations
+      .filter((ann) => msToSec(ann.at) <= timeInSeconds)
+      .forEach((ann) => {
+        this.renderAnnotation(msgContainer, ann);
+      });
+
+    return annotations.filter((ann) => msToSec(ann.at) > timeInSeconds);
+  },
+
   renderAnnotation(messageContainer, { user, body, at }) {
     const template = document.createElement("div");
     template.innerHTML = `
     <a href="#" data-seek=${this.escapeUserInput(at)}>
+      [${this.formatTime(at)}]
       <b>${this.escapeUserInput(user.username)}</b>: ${this.escapeUserInput(
       body
     )}
@@ -61,6 +83,12 @@ const Video = {
 
     messageContainer.appendChild(template);
     messageContainer.scrollTop = messageContainer.scrollHeight;
+  },
+
+  formatTime(timeInMilliseconds) {
+    let date = new Date(null);
+    date.setSeconds(msToSec(timeInMilliseconds));
+    return date.toISOString().substr(14, 5);
   },
 
   escapeUserInput(str) {
@@ -83,3 +111,7 @@ const Video = {
 };
 
 export default Video;
+
+function msToSec(timeInMillisecs) {
+  return timeInMillisecs / 1000;
+}
