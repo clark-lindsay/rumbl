@@ -33,6 +33,15 @@ const Video = {
       }
     });
 
+    msgContainer.addEventListener("click", (event) => {
+      event.preventDefault();
+      const timeInMilliseconds =
+        event.target.getAttribute("data-seek") ||
+        event.target.parentNode.getAttribute("data-seek");
+
+      timeInMilliseconds ? Player.seekTo(timeInMilliseconds) : null;
+    });
+
     videoChannel.on("new_annotation", (resp) => {
       this.renderAnnotation(msgContainer, resp);
     });
