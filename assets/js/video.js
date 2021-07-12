@@ -1,4 +1,5 @@
 import Player from "./player";
+import { Presence } from "phoenix";
 
 const Video = {
   init(socket, element) {
@@ -20,10 +21,21 @@ const Video = {
     const msgContainer = document.getElementById("msg-container");
     const msgInput = document.getElementById("msg-input");
     const postButton = document.getElementById("msg-submit");
+    const userList = document.getElementById("user-list");
     let lastSeenId = 0;
 
     const videoChannel = socket.channel(`videos:${videoId}`, () => {
       return { last_seen_id: lastSeenId };
+    });
+
+    const presence = new Presence(videoChannel);
+    presence.onSync(() => {
+      userList.innerHTML = presence
+        .list((_id, { user, metas: [_first, ...rest] }) => {
+          const sessionCount = rest.length + 1;
+          return `<li>${user.username}: (${sessionCount}) </li>`;
+        })
+        .join("");
     });
 
     postButton.addEventListener("click", (_event) => {
@@ -79,7 +91,9 @@ const Video = {
 
   renderAtTime(msgContainer, timeInSeconds, annotations) {
     annotations
-      .filter((ann) => msToSec(ann.at) <= timeInSeconds)
+      .filter((ann) => {
+        return msToSec(ann.at) <= timeInSeconds;
+      })
       .forEach((ann) => {
         this.renderAnnotation(msgContainer, ann);
       });
