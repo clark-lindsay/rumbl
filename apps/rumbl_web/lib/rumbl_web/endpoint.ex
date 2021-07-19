@@ -22,7 +22,7 @@ defmodule RumblWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :rumbl_eb,
+    from: :rumbl_web,
     gzip: false,
     only: ~w(css fonts images js favicon.ico robots.txt)
 
